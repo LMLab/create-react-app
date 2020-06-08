@@ -446,6 +446,15 @@ module.exports = function (webpackEnv) {
                       },
                     },
                   ],
+                  [
+                    require.resolve('babel-plugin-styled-components'),
+                    {
+                      pure: true,
+                      ssr: false,
+                      displayName: isEnvDevelopment ? true : false,
+                    },
+                  ],
+                  ['@babel/plugin-proposal-optional-chaining'],
                   isEnvDevelopment &&
                     shouldUseReactRefresh &&
                     require.resolve('react-refresh/babel'),
