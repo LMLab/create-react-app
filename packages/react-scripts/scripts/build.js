@@ -416,7 +416,7 @@ async function buildWidgets(buildData) {
       .replace(`%ENTRY_CSS_${widgetName.toUpperCase()}%`, cssFileName);
   }
 
-  loaderJs = Terser.minify(loaderJs);
+  loaderJs = Terser.minify(loaderJs).code;
 
   fs.writeFileSync(loaderJsPath, loaderJs);
 
