@@ -407,16 +407,21 @@ async function buildWidgets(buildData) {
       cssFileName = false;
     }
 
-    loaderJs = loaderJs.replace(
-      `%ENTRY_JS_${widgetName.toUpperCase()}%`,
-      `${widgetsMainFilesMap[widgetName].js}`
-    );
-
-    loaderJs = loaderJs.replace(
-      `%ENTRY_CSS_${widgetName.toUpperCase()}%`,
-      cssFileName
-    );
+    loaderJs = loaderJs
+      .replace(
+        `%ENTRY_JS_${widgetName.toUpperCase()}%`,
+        `${widgetsMainFilesMap[widgetName].js}`
+      )
+      .replace(`%ENTRY_CSS_${widgetName.toUpperCase()}%`, cssFileName);
   }
+
+  loaderJs = loaderJs
+    .replace(
+      /\/\/ @remove-on-build-begin([\s\S]*?)\/\/ @remove-on-build-end/gm,
+      ''
+    )
+    .replace(/\n/g, '')
+    .replace(/ /g, '');
 
   fs.writeFileSync(loaderJsPath, loaderJs);
 
