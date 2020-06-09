@@ -43,6 +43,7 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
+const Terser = require('terser');
 
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
@@ -400,11 +401,11 @@ async function buildWidgets(buildData) {
   let loaderJs = fs.readFileSync(loaderJsPath).toString();
 
   for (let widgetName in widgetsMainFilesMap) {
-    let cssFileName = widgetsMainFilesMap[widgetName].css || false;
+    let cssFileName = widgetsMainFilesMap[widgetName].css || 'none';
 
     /** We exclude css file from "sharedFunctionalities" since it has no style effects on the page. */
     if (widgetName === 'sharedFunctionalities') {
-      cssFileName = false;
+      cssFileName = 'none';
     }
 
     loaderJs = loaderJs
@@ -415,13 +416,7 @@ async function buildWidgets(buildData) {
       .replace(`%ENTRY_CSS_${widgetName.toUpperCase()}%`, cssFileName);
   }
 
-  loaderJs = loaderJs
-    .replace(
-      /\/\/ @remove-on-build-begin([\s\S]*?)\/\/ @remove-on-build-end/gm,
-      ''
-    )
-    .replace(/\n/g, '')
-    .replace(/ /g, '');
+  loaderJs = Terser.minify(loaderJs);
 
   fs.writeFileSync(loaderJsPath, loaderJs);
 

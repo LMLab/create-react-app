@@ -31,9 +31,10 @@ Affected files from us are:
 - `packages/react-scripts/config/webpack.config.js`
 - `packages/react-scripts/scripts/build.js`
 - `packages/react-scripts/package.json`\
-  In package.json we have added the following two packages:\
+  In package.json we have added the following packages:\
   `"@babel/plugin-proposal-optional-chaining": "^7.10.1",\`
   `"babel-plugin-styled-components": "^1.10.7",`
+  `"terser": "^4.7.0",`
 
 ## Build
 
@@ -84,7 +85,7 @@ After build:
 var filePaths = {
   InitSdk: {
     js: "/widgets/sdk/static/js/main.c4ec5f41.js",
-    css: "false",
+    css: "none",
   },
   Platform: {
     js: "/widgets/platform/static/js/main.5ad456be.js",
@@ -104,7 +105,7 @@ var filePaths = {
   },
   SharedFunctionalities: {
     js: "/widgets/sharedFunctionalities/static/js/main.58ef5983.js",
-    css: "false",
+    css: "none",
   },
 };
 ```
