@@ -23,6 +23,8 @@ When using this repository please follow those rules:
 
 1. `git fetch upstream`
 2. `git rebase upstream/master`
+3. `git push origin custom-react-scripts -f`
+4. `npm publish`
 
 The actual changes we are making are in "react-scripts" folder located in **/packages/react-scripts**.
 Affected files from us are:
