@@ -246,7 +246,7 @@ function addaptWebpackConfigForWidget(widgetPath, widgetName) {
 
   config.optimization.runtimeChunk = false;
 
-  config.entry = ['../src/web-widgets/utils/remote-route.js', widgetPath];
+  config.entry = [paths.widgetEntry, widgetPath];
 
   config.output.filename = config.output.filename.replace(
     'static/',

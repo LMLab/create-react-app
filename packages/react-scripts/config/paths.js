@@ -97,6 +97,7 @@ module.exports = {
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   widgets: getWidgetsPaths(),
+  widgetEntry: resolveApp('src/web-widgets/utils/remote-route.js'),
   appIndexJs: resolveModule(resolveApp, 'src/index'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
@@ -134,6 +135,9 @@ if (
     appPublic: resolveOwn(`${templatePath}/public`),
     appHtml: resolveOwn(`${templatePath}/public/index.html`),
     widgets: getWidgetsPaths(),
+    widgetEntry: resolveApp(
+      `${templatePath}/src/web-widgets/utils/remote-route.js`
+    ),
     appIndexJs: resolveModule(resolveOwn, `${templatePath}/src/index`),
     appPackageJson: resolveOwn('package.json'),
     appSrc: resolveOwn(`${templatePath}/src`),
