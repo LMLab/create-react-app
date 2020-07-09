@@ -228,6 +228,10 @@ function copyPublicFolder() {
   });
 }
 
+function copyThemesFolder() {
+  fs.copySync(paths.appSrc + '/styles/themes', paths.appBuild + '/themes');
+}
+
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -416,6 +420,8 @@ async function buildWidgets(buildData) {
   loaderJs = Terser.minify(loaderJs).code;
 
   fs.writeFileSync(loaderJsPath, loaderJs);
+
+  copyThemesFolder();
 
   console.log(chalk.green('Widgets build is successful!\n'));
 
