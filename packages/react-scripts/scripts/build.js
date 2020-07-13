@@ -230,6 +230,7 @@ function copyPublicFolder() {
 
 function copyThemesFolder() {
   fs.copySync(paths.appSrc + '/styles/themes', paths.appBuild + '/themes');
+  console.log(chalk.green('Themes were copied successfully!'));
 }
 
 async function asyncForEach(array, callback) {
