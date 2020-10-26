@@ -1,6 +1,6 @@
 {
   "name": "@3marketers/react-scripts",
-  "version": "3.4.8",
+  "version": "3.4.9",
   "description": "Configuration and scripts for Create React App.",
   "repository": {
     "type": "git",
@@ -89,6 +89,7 @@
     "workbox-webpack-plugin": "5.1.4"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
     "@babel/plugin-proposal-optional-chaining": "^7.10.1",
     "babel-plugin-styled-components": "^1.10.7",
     "react": "^17.0.1",

@@ -34,9 +34,10 @@ Affected files from us are:
 - `packages/react-scripts/scripts/build.js`
 - `packages/react-scripts/package.json`\
   In package.json we have added the following packages:\
-  `"@babel/plugin-proposal-optional-chaining": "^7.10.1",\`
-  `"babel-plugin-styled-components": "^1.10.7",`
-  `"terser": "^4.7.0",`
+- `"@babel/plugin-proposal-nullish-coalescing-operator": ^7.12.1`
+- `"@babel/plugin-proposal-optional-chaining": "^7.10.1"`
+- `"babel-plugin-styled-components": "^1.10.7"`
+- `"terser": "^4.7.0"`
 
 ## Build
 
