@@ -11,10 +11,13 @@ const Terser = require('terser');
 const webpack = require('webpack');
 const paths = require('../config/paths');
 const chalk = require('react-dev-utils/chalk');
+const { performance } = require('perf_hooks');
 const configFactory = require('../config/webpack.config');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
-const isInteractive = process.stdout.isTTY;
 const { checkBrowsers } = require('react-dev-utils/browsersHelper');
+
+const buildStartTime = performance.now();
+const isInteractive = process.stdout.isTTY;
 
 async function buildWidgets() {
   const widgetsMainFilesMap = {};
@@ -123,7 +126,9 @@ async function buildWidgets() {
 
   copyThemesFolder();
 
-  console.log(chalk.green('Widgets build is successful!\n'));
+  const buildTimeInSecs = parseInt((performance.now() - buildStartTime) / 1000);
+
+  console.log(chalk.green(`Widgets builded for ${buildTimeInSecs}s \n`));
 }
 
 function copyThemesFolder() {
@@ -215,4 +220,4 @@ function addaptWebpackConfigForWidget(widgetPath, widgetName) {
   return webpack(config);
 }
 
-checkBrowsers(paths.appPath, isInteractive).then(buildWidgets)
+checkBrowsers(paths.appPath, isInteractive).then(buildWidgets);

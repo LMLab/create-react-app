@@ -35,6 +35,7 @@ const path = require('path');
 const chalk = require('react-dev-utils/chalk');
 const fs = require('fs-extra');
 const bfj = require('bfj');
+const { performance } = require('perf_hooks');
 const webpack = require('webpack');
 const configFactory = require('../config/webpack.config');
 const paths = require('../config/paths');
@@ -43,7 +44,7 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
-
+const buildStartTime = performance.now();
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
 const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
@@ -100,7 +101,13 @@ checkBrowsers(paths.appPath, isInteractive)
             ' to the line before.\n'
         );
       } else {
-        console.log(chalk.green('Compiled successfully.\n'));
+        const buildTimeInSecs = parseInt(
+          (performance.now() - buildStartTime) / 1000
+        );
+
+        console.log(
+          chalk.green(`Compiled successfully for ${buildTimeInSecs}s.\n`)
+        );
       }
 
       console.log('File sizes after gzip:\n');
