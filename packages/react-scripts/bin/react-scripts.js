@@ -25,6 +25,9 @@ const script = scriptIndex === -1 ? args[0] : args[scriptIndex];
 const nodeArgs = scriptIndex > 0 ? args.slice(0, scriptIndex) : [];
 
 if (['build', 'eject', 'start', 'test'].includes(script)) {
+  const shouldServe = args.includes("--serve");
+  shouldServe && applyProcessEnvVariablesFromArgs(args)
+  
   const result = spawn.sync(
     process.execPath,
     nodeArgs
@@ -48,6 +51,7 @@ if (['build', 'eject', 'start', 'test'].includes(script)) {
     }
     process.exit(1);
   }
+  shouldServe ? serve() : buildWidgets();
   process.exit(result.status);
 } else {
   console.log('Unknown script "' + script + '".');
@@ -55,4 +59,57 @@ if (['build', 'eject', 'start', 'test'].includes(script)) {
   console.log(
     'See: https://facebook.github.io/create-react-app/docs/updating-to-new-releases'
   );
+}
+
+function applyProcessEnvVariablesFromArgs (args) {
+  const regex = /[A-Z_]+/;
+
+  args.forEach((arg) => {
+    if (regex.test(arg) ) {
+      const [key, value] = arg.split("=");
+      process.env[key] = value
+    }
+  })
+}
+
+function serve () {
+  const servingResult = spawn.sync(
+    process.execPath,
+    nodeArgs
+      .concat(require.resolve("../scripts/serve"))
+      .concat(args.slice(scriptIndex + 1)),
+    { stdio: 'inherit' }
+  );
+
+  if (servingResult.signal) {
+    if (servingResult.signal === 'SIGKILL') {
+      console.log("Something went wrong while serving the production build");
+    } else if (servingResult.signal === 'SIGTERM') {
+      console.log("Something went wrong while serving the production build");
+    }
+    process.exit(1);
+  }
+
+  process.exit(servingResult.status);
+}
+
+function buildWidgets () {
+  const widgetsBuildResult = spawn.sync(
+    process.execPath,
+    nodeArgs
+      .concat(require.resolve("../scripts/buildWidgets"))
+      .concat(args.slice(scriptIndex + 1)),
+    { stdio: 'inherit' }
+  );
+
+  if (widgetsBuildResult.signal) {
+    if (widgetsBuildResult.signal === 'SIGKILL') {
+      console.log("Something went wrong while building the widgets");
+    } else if (widgetsBuildResult.signal === 'SIGTERM') {
+      console.log("Something went wrong while building the widgets");
+    }
+    process.exit(1);
+  }
+
+  process.exit(widgetsBuildResult.status);
 }

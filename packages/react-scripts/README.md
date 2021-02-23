@@ -31,20 +31,25 @@ Affected files from us are:
 
 - `packages/react-scripts/config/paths.js`
 - `packages/react-scripts/config/webpack.config.js`
-- `packages/react-scripts/scripts/build.js`
+- `packages/react-scripts/scripts/buildWidgets.js`
+- `packages/react-scripts/bin/react-scripts.js`
+- `packages/react-scripts/scripts/serve.js`
 - `packages/react-scripts/package.json`\
   In package.json we have added the following packages:\
 - `"@babel/plugin-proposal-nullish-coalescing-operator": ^7.12.1`
 - `"@babel/plugin-proposal-optional-chaining": "^7.10.1"`
 - `"babel-plugin-styled-components": "^1.10.7"`
+- `"https-localhost": "^4.6.4"`
+- `"express": "^4.17.1"`
 - `"terser": "^4.7.0"`
 
 ## Build
 
-The custom build procedure has two main tasks:
+The custom build procedure has three main tasks:
 
 - Build individual react widgets (App, Login, Register etc.) as a separate react instances
 - Applying changes to the **loader.js** file.
+- Serve local production build on localhost if "--serve" argument is passed.
 
 ## loader.js
 
