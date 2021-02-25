@@ -94,6 +94,7 @@ module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
   appBuild: resolveApp('build'),
+  widgetsExamples: resolveApp('widgets-examples'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   widgets: getWidgetsPaths(),

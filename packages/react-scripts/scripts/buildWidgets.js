@@ -91,6 +91,7 @@ async function buildWidgets() {
       widgetBuildResult.widget,
       'asset-manifest.json'
     );
+
     const widgetManifestContent = JSON.parse(
       fs.readFileSync(widgetManifestPath).toString()
     );
@@ -102,6 +103,7 @@ async function buildWidgets() {
   });
 
   const loaderJsPath = path.join(paths.appBuild, 'loader.js');
+  const loaderJsPathForWidgets = path.join(paths.widgetsExamples, 'loader.js');
   let loaderJs = fs.readFileSync(loaderJsPath).toString();
 
   for (let widgetName in widgetsMainFilesMap) {
@@ -123,8 +125,19 @@ async function buildWidgets() {
   loaderJs = Terser.minify(loaderJs).code;
 
   fs.writeFileSync(loaderJsPath, loaderJs);
+  fs.copySync(loaderJsPath, loaderJsPathForWidgets);
 
   copyThemesFolder();
+
+  copyFolderforWidgetExample('images');
+  copyFolderforWidgetExample('locales');
+  copyFolderforWidgetExample('widgets');
+  createLanguageFoldersInWidgetsExample([
+    {
+      language: 'de',
+      locale: 'de_DE',
+    },
+  ]);
 
   const buildTimeInSecs = parseInt((performance.now() - buildStartTime) / 1000);
 
@@ -133,7 +146,57 @@ async function buildWidgets() {
 
 function copyThemesFolder() {
   fs.copySync(paths.appSrc + '/styles/themes', paths.appBuild + '/themes');
+
   console.log(chalk.green('Themes were copied successfully!'));
+}
+
+function copyFolderforWidgetExample(folderName) {
+  fs.copySync(
+    path.join(paths.appBuild, folderName),
+    path.join(paths.widgetsExamples, folderName)
+  );
+}
+
+function createLanguageFoldersInWidgetsExample(languages) {
+  languages.forEach(async ({ language, locale }) => {
+    const languageFolderPath = path.join(paths.widgetsExamples, language);
+    !fs.existsSync(languageFolderPath) && fs.mkdirSync(languageFolderPath);
+
+    try {
+      const files = await fs.readdir(paths.widgetsExamples);
+
+      files.forEach(file => {
+        const filePath = path.join(languageFolderPath, file);
+        const languagePath = path.join(languageFolderPath, language);
+
+        if (filePath !== languagePath) {
+          const filePathForLanguage = path.join(
+            paths.widgetsExamples,
+            language,
+            file
+          );
+          fs.copySync(
+            path.join(paths.widgetsExamples, file),
+            filePathForLanguage
+          );
+
+          if (filePathForLanguage.includes('main.js')) {
+            let filePathForLanguageContent = fs
+              .readFileSync(filePathForLanguage)
+              .toString();
+            filePathForLanguageContent = filePathForLanguageContent.replace(
+              'en_GB',
+              locale
+            );
+
+            fs.writeFileSync(filePathForLanguage, filePathForLanguageContent);
+          }
+        }
+      });
+    } catch (error) {
+      console.log(chalk.red(error));
+    }
+  });
 }
 
 async function asyncForEach(array, callback) {

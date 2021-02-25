@@ -25,9 +25,12 @@ const script = scriptIndex === -1 ? args[0] : args[scriptIndex];
 const nodeArgs = scriptIndex > 0 ? args.slice(0, scriptIndex) : [];
 
 if (['build', 'eject', 'start', 'test'].includes(script)) {
-  const shouldServe = args.includes("--serve");
-  shouldServe && applyProcessEnvVariablesFromArgs(args)
-  
+  const shouldServeApp = args.includes('--serveApp');
+  const shouldServeWidgets = !shouldServeApp && args.includes('--serveWidgets');
+
+  (shouldServeWidgets || shouldServeApp) &&
+    applyProcessEnvVariablesFromArgs(args);
+
   const result = spawn.sync(
     process.execPath,
     nodeArgs
@@ -35,6 +38,7 @@ if (['build', 'eject', 'start', 'test'].includes(script)) {
       .concat(args.slice(scriptIndex + 1)),
     { stdio: 'inherit' }
   );
+
   if (result.signal) {
     if (result.signal === 'SIGKILL') {
       console.log(
@@ -51,7 +55,10 @@ if (['build', 'eject', 'start', 'test'].includes(script)) {
     }
     process.exit(1);
   }
-  shouldServe ? serve() : buildWidgets();
+
+  shouldServeApp ? serveApp() : buildWidgets(shouldServeWidgets);
+  shouldServeWidgets && serveWidgets();
+
   process.exit(result.status);
 } else {
   console.log('Unknown script "' + script + '".');
@@ -61,31 +68,31 @@ if (['build', 'eject', 'start', 'test'].includes(script)) {
   );
 }
 
-function applyProcessEnvVariablesFromArgs (args) {
+function applyProcessEnvVariablesFromArgs(args) {
   const regex = /[A-Z_]+/;
 
-  args.forEach((arg) => {
-    if (regex.test(arg) ) {
-      const [key, value] = arg.split("=");
-      process.env[key] = value
+  args.forEach(arg => {
+    if (regex.test(arg)) {
+      const [key, value] = arg.split('=');
+      process.env[key] = value;
     }
-  })
+  });
 }
 
-function serve () {
+function serveApp() {
   const servingResult = spawn.sync(
     process.execPath,
     nodeArgs
-      .concat(require.resolve("../scripts/serve"))
+      .concat(require.resolve('../scripts/serveApp'))
       .concat(args.slice(scriptIndex + 1)),
     { stdio: 'inherit' }
   );
 
   if (servingResult.signal) {
     if (servingResult.signal === 'SIGKILL') {
-      console.log("Something went wrong while serving the production build");
+      console.log('Something went wrong while serving the production build');
     } else if (servingResult.signal === 'SIGTERM') {
-      console.log("Something went wrong while serving the production build");
+      console.log('Something went wrong while serving the production build');
     }
     process.exit(1);
   }
@@ -93,23 +100,44 @@ function serve () {
   process.exit(servingResult.status);
 }
 
-function buildWidgets () {
+function buildWidgets(shouldServeWidgets) {
   const widgetsBuildResult = spawn.sync(
     process.execPath,
     nodeArgs
-      .concat(require.resolve("../scripts/buildWidgets"))
+      .concat(require.resolve('../scripts/buildWidgets'))
       .concat(args.slice(scriptIndex + 1)),
     { stdio: 'inherit' }
   );
 
   if (widgetsBuildResult.signal) {
     if (widgetsBuildResult.signal === 'SIGKILL') {
-      console.log("Something went wrong while building the widgets");
+      console.log('Something went wrong while building the widgets');
     } else if (widgetsBuildResult.signal === 'SIGTERM') {
-      console.log("Something went wrong while building the widgets");
+      console.log('Something went wrong while building the widgets');
     }
     process.exit(1);
   }
 
-  process.exit(widgetsBuildResult.status);
+  !shouldServeWidgets && process.exit(widgetsBuildResult.status);
+}
+
+function serveWidgets() {
+  const widgetsServeResult = spawn.sync(
+    process.execPath,
+    nodeArgs
+      .concat(require.resolve('../scripts/serveWidgets'))
+      .concat(args.slice(scriptIndex + 1)),
+    { stdio: 'inherit' }
+  );
+
+  if (widgetsServeResult.signal) {
+    if (widgetsServeResult.signal === 'SIGKILL') {
+      console.log('Something went wrong while serving the builded widgets');
+    } else if (widgetsServeResult.signal === 'SIGTERM') {
+      console.log('Something went wrong while serving the builded widgets');
+    }
+    process.exit(1);
+  }
+
+  process.exit(widgetsServeResult.status);
 }
